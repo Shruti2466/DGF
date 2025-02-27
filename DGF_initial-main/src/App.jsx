@@ -1,0 +1,48 @@
+import './App.css';
+import { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import FixedComponent from './components/FixedComponent';
+import TrainingContainer from './components/TrainingContainer';
+import NewRequestContainer from './components/NewRequestContainer';
+import InitiateTrainingContainer from './components/InitiateTrainingContainer.jsx';
+import SpocContainer from './components/SpocContainer';
+import Login from './components/Auth/Login';
+import ProtectedRoute from './components/Auth/ProctectedRoutes.jsx';
+import { AuthProvider } from './components/Auth/AuthContext.jsx';
+import ClarificationRequestedContainer from './components/ClarificationRequestedContainer.jsx';
+import { ChatProvider } from './components/Context/ChatContext.jsx';
+import DashboardContainer from './components/DashboardContainer.jsx';
+import LearningInitiatedDetails from './components/CapDevTrainInitiate/LearningInitiatedDetails.jsx';
+import InitiateLearningDetails from './components/CapDevTrainInitiate/InitiateLearningDetails.jsx';
+ 
+function App() {
+  const obj = {
+    color: "black",
+  };
+ 
+ 
+  return (
+    <AuthProvider>
+      <div style={obj} className='App'>
+        <Router>
+          <ChatProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<ProtectedRoute element={<FixedComponent><TrainingContainer /></FixedComponent>} />} />
+              <Route path="/training-container" element={<ProtectedRoute element={<FixedComponent><TrainingContainer /></FixedComponent>} />} />
+              <Route path="/new-request" element={<ProtectedRoute element={<FixedComponent><NewRequestContainer /></FixedComponent>} />} />
+              <Route path="/initiate-training" element={<ProtectedRoute element={<FixedComponent><InitiateTrainingContainer /></FixedComponent>} />} />
+              <Route path='/spoc-approval/:requestid' element={<ProtectedRoute element={<FixedComponent><SpocContainer /></FixedComponent>} />} />
+              <Route path='/dashboardgraph' element={<ProtectedRoute element={<FixedComponent><DashboardContainer  /></FixedComponent>} />} />
+              <Route path='/clarification-requested/:requestid' element={<ProtectedRoute element={<FixedComponent><ClarificationRequestedContainer /></FixedComponent>} />} />
+              <Route path='/learning-initiated-details/:requestid' element={<ProtectedRoute element={<FixedComponent><LearningInitiatedDetails /></FixedComponent>} />} />
+              <Route path='/initiate-learning-details/:requestid' element={<ProtectedRoute element={<FixedComponent><InitiateLearningDetails /></FixedComponent>} />} />
+            </Routes>
+          </ChatProvider>
+        </Router>
+      </div>
+    </AuthProvider>
+  );
+}
+ 
+export default App;
