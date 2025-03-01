@@ -1,9 +1,10 @@
+//App.js
 const express = require('express');
 const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
-
-
+ 
+ 
 const authRoutes = require('./routes/authRoutes');
 const roleRoutes = require('./routes/roleRoutes');
 const trainingRoutes = require('./routes/trainingObjectivesRoutes');
@@ -26,9 +27,14 @@ const requestStatusRoutes = require('./routes/requestStatusRoutes');
 const getTrainingRequestDetailsRoutes = require('./routes/getTrainingRequestDetailsRoutes');
 const commentRoutes = require('./routes/commentRoutes');
 const empdetailsforcommentsRoutes=require('./routes/getEmpDetailsCommentRoutes');
-
+const courseSearchRoutes = require('./routes/courseSearchRoutes');
+const courseTypeRoutes = require('./routes/courseTypeRoutes');
+const assignCourseRoutes = require('./routes/assignCourseRoutes');
+const employeeWithoutManagerRoutes = require('./routes/employeeWithoutManagerRoutes');
+ 
+ 
 const app = express();
-
+ 
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
@@ -36,10 +42,10 @@ const io = socketIo(server, {
         methods: ["GET", "POST"]
     }
 });
-
+ 
 app.use(express.json());
 app.use(cors());
-
+ 
 app.use('/api/auth', authRoutes);
 app.use('/api/role', roleRoutes);
 app.use('/api/training', trainingRoutes);
@@ -65,22 +71,28 @@ app.use('/api', getTrainingRequestDetailsRoutes);
 app.use('/api/employeeSearchByEmail', employeeSearchByEmailRoutes); // Add the new route
 app.use('/api/comments', commentRoutes);
 app.use('/api/getempdetails', empdetailsforcommentsRoutes);
-
+app.use('/api/courses', courseSearchRoutes);
+app.use('/api/course-types', courseTypeRoutes);
+app.use('/api/assign-courses', assignCourseRoutes);
+app.use('/api/employees', employeeWithoutManagerRoutes);
+ 
+ 
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(500).json({ message: 'Internal Server Error' });
 });
-
+ 
 // WebSocket connection for real-time updates
 io.on('connection', (socket) => {
     console.log('New client connected');
-    
+   
     socket.on('disconnect', () => {
       console.log('Client disconnected');
     });
   });
-  
+ 
 const PORT = process.env.PORT || 8000;
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
+ 

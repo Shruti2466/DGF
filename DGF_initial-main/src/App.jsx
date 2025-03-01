@@ -35,8 +35,8 @@ function App() {
               <Route path='/spoc-approval/:requestid' element={<ProtectedRoute element={<FixedComponent><SpocContainer /></FixedComponent>} />} />
               <Route path='/dashboardgraph' element={<ProtectedRoute element={<FixedComponent><DashboardContainer  /></FixedComponent>} />} />
               <Route path='/clarification-requested/:requestid' element={<ProtectedRoute element={<FixedComponent><ClarificationRequestedContainer /></FixedComponent>} />} />
-              <Route path='/learning-initiated-details/:requestid' element={<ProtectedRoute element={<FixedComponent><LearningInitiatedDetails /></FixedComponent>} />} />
-              <Route path='/initiate-learning-details/:requestid' element={<ProtectedRoute element={<FixedComponent><InitiateLearningDetails /></FixedComponent>} />} />
+              <Route path='/learning-initiated-details/:requestId' element={<ProtectedRoute element={<FixedComponent><LearningInitiatedDetails /></FixedComponent>} />} />
+              <Route path='/initiate-learning-details/:requestId' element={<ProtectedRoute element={<FixedComponent><InitiateLearningDetails /></FixedComponent>} />} />
             </Routes>
           </ChatProvider>
         </Router>

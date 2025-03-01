@@ -1,92 +1,278 @@
-import { useEffect, useState, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
-import { Box, Typography, Paper, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Avatar, Button } from "@mui/material";
-import AuthContext from "../Auth/AuthContext";
+// components/CapDevInitiateLearningAssignCourse.jsx
+import { useState, useEffect } from "react";
+import { 
+  Box, Typography, Button, Table, TableBody, TableCell, TableContainer, TableHead, 
+  TableRow, Paper, Checkbox, Avatar, IconButton, Pagination, PaginationItem,
+  CircularProgress
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { KeyboardArrowDown, KeyboardArrowUp, NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
+import { arrayBufferToBase64 } from "../../utils/ImgConveter";
+import AssignCourseModal from "./AssignCourseModal";
  
-const InitiateLearningAssignCourse = () => {
-  const [requestDetails, setRequestDetails] = useState(null);
+const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+  "& .MuiTableCell-root": {
+    padding: "16px",
+    textAlign: "center",
+    fontFamily: "inherit",
+  },
+  "& .MuiTableCell-root:first-of-type": {
+    paddingRight: "0px !important",
+    fontFamily: "inherit",
+  },
+  "& .MuiTableCell-root:nth-of-type(2)": {
+    paddingLeft: "0px !important",
+    fontFamily: "inherit",
+  },
+}));
+ 
+const HeaderButton = styled(Button)(({ theme }) => ({
+  height: "30px",
+  fontSize: "10px",
+  textTransform: "none",
+  fontFamily: "inherit",
+  padding: "8px 10px",
+  backgroundColor: "#fff",
+  color: "#666",
+  border: "1px solid #ddd",
+  borderRadius: "6px",
+  "&:hover": {
+    backgroundColor: "#f5f5f5",
+  },
+}));
+ 
+const StatusText = styled(Typography)(({ theme }) => ({
+  color: "#B33A3A",
+  fontWeight: 500,
+}));
+ 
+const ExpandedSection = styled(Box)(({ theme }) => ({
+  padding: "0 220px 16px 20px",
+}));
+ 
+function Row({ row, isExpanded, isSelected, onToggleExpand, onSelect, onAssignCourse }) {
+  const rowBackgroundColor = isExpanded ? "#F1F2FD" : "white";
+  
+  return (
+    <>
+      <TableRow sx={{ 
+        "& > *": { borderBottom: "none" }, 
+        backgroundColor: rowBackgroundColor 
+      }}>
+        <TableCell padding="checkbox">
+          <IconButton onClick={() => onToggleExpand(row.emp_id)}>
+            {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+          </IconButton>
+        </TableCell>
+        <TableCell padding="checkbox">
+          <Checkbox 
+            checked={isSelected}
+            onChange={onSelect}
+            color="primary"
+          />
+        </TableCell>
+        <TableCell>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <Avatar alt={row.emp_name} src={row.profile_image} />
+            <Box>
+              <Typography>{row.emp_name}</Typography>
+            </Box>
+          </Box>
+        </TableCell>
+        <TableCell align="center">0</TableCell>
+        <TableCell align="center">{new Date(row.availablefrom).toLocaleDateString()}</TableCell>
+        <TableCell align="center">{row.dailyband}</TableCell>
+        <TableCell align="center">{row.availableonweekend === 1 ? "Yes" : "No"}</TableCell>
+        <TableCell align="center">
+          <StatusText>Initiate Learning</StatusText>
+        </TableCell>
+        <TableCell align="center">
+          <HeaderButton onClick={onAssignCourse}>
+            Assign Course
+          </HeaderButton>
+        </TableCell>
+      </TableRow>
+      {isExpanded && (
+        <TableRow sx={{ backgroundColor: "#F1F2FD" }}>
+          <TableCell colSpan={9} padding="0">
+            <ExpandedSection>
+              <Table size="small" aria-label="details">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Req No:</TableCell>
+                    <TableCell>Project</TableCell>
+                    <TableCell>Objective</TableCell>
+                    <TableCell>Tech Stack</TableCell>
+                    <TableCell>Requested on</TableCell>
+                    <TableCell>Assigned by</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>#231</TableCell>
+                    <TableCell>Staffing Nation</TableCell>
+                    <TableCell>Upselling</TableCell>
+                    <TableCell>React</TableCell>
+                    <TableCell>Jan 20, 2025</TableCell>
+                    <TableCell>Mary Grace</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </ExpandedSection>
+          </TableCell>
+        </TableRow>
+      )}
+    </>
+  );
+}
+ 
+function CourseTracker() {
+  const [expandedId, setExpandedId] = useState(null);
+  const [page, setPage] = useState(1);
   const [learners, setLearners] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const { requestid } = useParams();
-  const { user } = useContext(AuthContext);
+  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { requestId } = useParams();
+  const rowsPerPage = 5;
+  const totalRecords = 15;
  
   useEffect(() => {
-    const fetchRequestDetails = async () => {
+    const fetchLearners = async () => {
       try {
-const response = await axios.get(`http://localhost:8000/api/training-request/${requestid}`);
-setRequestDetails(response.data);
-        setLoading(false);
- 
-        // Navigate when status is 'spoc approved' or 'capdev approved'
-if (response.data.status === "spoc approved" || response.data.status === "capdev approved") {
-          navigate(`/initiate-learning-details/${requestid}`);
-        }
- 
-        // Fetch learners data
-const learnerResponse = await axios.get(`http://localhost:8000/api/getEmpNewTrainingRequested/getEmpNewTrainingRequested/${requestid}`);
-setLearners(learnerResponse.data);
+        setLoading(true);
+        const response = await fetch(
+          `http://localhost:8000/api/getEmpNewTrainingRequested/getEmpNewTrainingRequested/${requestId}`
+        );
+        const data = await response.json();
+        const updatedLearners = data.map((learner) => {
+          if (learner.profile_image && learner.profile_image.data) {
+            const base64Image = `data:image/jpeg;base64,${arrayBufferToBase64(
+              learner.profile_image.data
+            )}`;
+            return { ...learner, profile_image: base64Image };
+          }
+          return learner;
+        });
+        setLearners(updatedLearners);
       } catch (error) {
-        console.error("Error fetching request details:", error);
-        setError("Failed to fetch request details.");
+        console.error("Error fetching learners:", error);
+      } finally {
         setLoading(false);
       }
     };
+    fetchLearners();
+  }, [requestId]);
  
-    fetchRequestDetails();
-  }, [requestid, navigate]);
+  const handleToggleExpand = (id) => {
+    setExpandedId(expandedId === id ? null : id);
+  };
+ 
+  const handleSelectEmployee = (empId) => {
+    setSelectedEmployees(prev =>
+      prev.includes(empId) ? prev.filter(id => id !== empId) : [...prev, empId]
+    );
+  };
+ 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
  
   return (
-    <Paper sx={{ p: 3, mt: 2, boxShadow: 2, borderRadius: "8px" }}>
-      <Typography variant="h6" fontWeight="bold">Assign Courses & Track the Learning Progress</Typography>
+    <Box sx={{ 
+      backgroundColor: "#FFFFFF", 
+      borderRadius: "16px", 
+      padding: 3, 
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.05)",
+      position: 'relative' 
+    }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+        <Typography variant="h6" fontWeight="bold">
+          Assign Courses & Track the Learning Progress
+        </Typography>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <HeaderButton>Send Reminder</HeaderButton>
+          <HeaderButton 
+            onClick={() => setShowAssignModal(true)}
+            disabled={selectedEmployees.length === 0}
+          >
+            Assign Course
+          </HeaderButton>
+        </Box>
+      </Box>
+ 
       {loading ? (
-        <CircularProgress />
-      ) : error ? (
-        <Typography color="error">{error}</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
       ) : (
         <>
-          <Typography>Status: {requestDetails?.status || "Unknown"}</Typography>
-          <TableContainer component={Paper} sx={{ mt: 2 }}>
-            <Table>
+          <StyledTableContainer component={Paper}>
+            <Table aria-label="collapsible table">
               <TableHead>
-                <TableRow sx={{ backgroundColor: "#CCE3FF" }}>
-                  <TableCell>Employee ID</TableCell>
+                <TableRow sx={{ backgroundColor: "#FAFAFA" }}>
+                  <TableCell width="48px" />
+                  <TableCell padding="checkbox" width="48px" />
                   <TableCell>Name</TableCell>
-                  <TableCell>Available From</TableCell>
-                  <TableCell>Daily Bandwidth</TableCell>
-                  <TableCell>Weekend Availability</TableCell>
+                  <TableCell align="center">Courses Assigned</TableCell>
+                  <TableCell align="center">Available From</TableCell>
+                  <TableCell align="center">Daily Bandwidth</TableCell>
+                  <TableCell align="center">Weekend Availability</TableCell>
+                  <TableCell align="center">Status</TableCell>
+                  <TableCell align="center">Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {learners.length > 0 ? (
-learners.map((learner) => (
-                    <TableRow key={learner.emp_id}>
-                      <TableCell>{learner.emp_id}</TableCell>
-                      <TableCell>
-                        <Box display="flex" alignItems="center" gap={1}>
-                          <Avatar alt="User" src={learner.profile_image} />
-                          {learner.emp_name}
-                        </Box>
-                      </TableCell>
-                      <TableCell>{learner.availablefrom}</TableCell>
-                      <TableCell>{learner.dailyband}</TableCell>
-                      <TableCell>{learner.availableonweekend === 1 ? "Yes" : "No"}</TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={5} align="center">No learners found</TableCell>
-                  </TableRow>
-                )}
+                {learners.map((row) => (
+                  <Row
+                    key={row.emp_id}
+                    row={row}
+                    isExpanded={expandedId === row.emp_id}
+                    isSelected={selectedEmployees.includes(row.emp_id)}
+                    onToggleExpand={handleToggleExpand}
+                    onSelect={() => handleSelectEmployee(row.emp_id)}
+                    onAssignCourse={() => {
+                      setSelectedEmployees([row.emp_id]);
+                      setShowAssignModal(true);
+                    }}
+                  />
+                ))}
               </TableBody>
             </Table>
-          </TableContainer>
+          </StyledTableContainer>
+ 
+          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 2, px: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Showing {rowsPerPage} of {totalRecords} records
+            </Typography>
+            <Pagination
+              count={Math.ceil(totalRecords / rowsPerPage)}
+              page={page}
+              onChange={handleChangePage}
+              renderItem={(item) => (
+                <PaginationItem
+                  slots={{ previous: NavigateBefore, next: NavigateNext }}
+                  {...item}
+                />
+              )}
+            />
+          </Box>
         </>
       )}
-    </Paper>
-  );
-};
  
-export default InitiateLearningAssignCourse;
+      <AssignCourseModal
+        open={showAssignModal}
+        onClose={() => {
+          setShowAssignModal(false);
+          setSelectedEmployees([]);
+        }}
+        employeeIds={selectedEmployees}
+        requestId={requestId}
+      />
+    </Box>
+  );
+}
+ 
+export default CourseTracker;
+ 
