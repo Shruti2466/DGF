@@ -64,7 +64,6 @@ const StatusChip = styled(Box)(({ theme }) => ({
   color: "#06819E",
 }));
 
-// Row Component
 function Row({ row, isExpanded, onToggleExpand, onAssignCourse }) {
   const [assignedCourses, setAssignedCourses] = useState([]);
   const [loadingCourses, setLoadingCourses] = useState(false);
@@ -152,26 +151,33 @@ function Row({ row, isExpanded, onToggleExpand, onAssignCourse }) {
                   <TableBody>
                     {assignedCourses.map((course, index) => (
                       <TableRow key={index}>
-                        <TableCell>{course.mentor_id}</TableCell>
+                        <TableCell>{course.mentor_name}</TableCell>
                         <TableCell>
-                          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                            <Box sx={{ flexGrow: 1 }}>
-                              <Typography variant="body2" sx={{
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                fontSize: "12px"
-                              }}>
-                                {course.course_name || "N/A"}
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            {/* Course Name */}
+                            <Typography variant="body2" sx={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              fontSize: "12px",
+                              mb: 1, // Margin bottom for spacing
+                            }}>
+                              {course.course_name || "N/A"}
+                            </Typography>
+
+                            {/* Progress Bar and Percentage */}
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                              <Box sx={{ flexGrow: 1 }}>
+                                <LinearProgress 
+                                  variant="determinate" 
+                                  value={course.progress || 0} 
+                                  sx={{ height: 8, borderRadius: 4 }} // Styling for progress bar
+                                />
+                              </Box>
+                              <Typography variant="caption">
+                                {course.progress || 0}%
                               </Typography>
                             </Box>
-                            <Box sx={{ width: "80%" }}>
-                              <LinearProgress variant="determinate" 
-                                value={course.progress || 0} />
-                            </Box>
-                            <Typography variant="caption">
-                              {course.progress || 0}%
-                            </Typography>
                           </Box>
                         </TableCell>
                         <TableCell>
