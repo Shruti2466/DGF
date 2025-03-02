@@ -1,0 +1,232 @@
+ 
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+ 
+.table-container {
+  margin: 10px !important; /*Set margin of 20px from each side */
+  width: calc(
+    100% - 40px
+  ) !important; /* Adjust width to account for the margins */
+  margin-top: -5px !important; /* Adjust top margin */
+  overflow: hidden !important; /* Prevent scrolling */
+  display: flex !important;
+  flex-direction: column !important;
+  border-radius: 10px !important;
+  padding-left: 10px !important;
+  font-family: 'Poppins', sans-serif !important;
+  background-color: #FFFFFF !important;
+ box-shadow: none !important;
+ text-align: center !important;
+}
+ 
+.table-container table {
+  width: 100%;
+  border-collapse: collapse; /* To remove space between rows */
+}
+ 
+.table-container table tr:nth-child(even) {
+  background-color : #FFFFFF; /* Set color for even rows */
+}
+ 
+.table-container table tr:nth-child(odd) {
+  background-color:#F1F2FD; /* Set color for odd rows */
+}
+ 
+.status {
+  margin-left: 0;
+  font-size: 5px !important;
+  font-family: 'Poppins', sans-serif !important;
+}
+.status-text {
+  font-size: 10px !important;
+  white-space: pre-wrap;
+   /* Adjust the font size as needed */
+   font-family: 'Poppins', sans-serif !important;
+}
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: -10px;
+  text-transform: none;
+  font-weight: bold !important;
+  font-family: 'Poppins', sans-serif !important;
+  border-bottom: 0.2px solid #ccc; /* Border for filter section */
+  position: relative;
+  /* margin-right: 15px; */
+}
+ 
+.MuiTab-root {
+  max-width: 102% !important;
+  min-width: 20px !important;
+  font-size: 14px !important;
+  text-transform: none !important;
+  font-family: 'Poppins', sans-serif !important;
+  letter-spacing: 0.3px !important;
+  opacity: 1 !important;
+  font-weight: 400 !important;
+  color: black !important;
+  border-bottom: none !important;
+ 
+}
+.MuiTab-root:hover {
+  color: #0056b3 !important;
+}
+.selected-tab {
+  color: #0544A1 !important;
+  font-weight: 500 !important;
+}
+ 
+ 
+.MuiTableCell-root {
+  padding: 8px !important; /* Decrease padding to reduce row height */
+  font-size: 12px !important; /* Adjust font size if needed */
+  height: 48px !important; /* Set a fixed height for table cells */
+  font-family: 'Poppins',  !important;
+  height: 25px  !important;
+ 
+ 
+}
+ 
+.MuiTableRow-root {
+  height: 10px !important; /* Set a fixed height for table rows */
+  font-family: 'Poppins', sans-serif !important;
+ 
+ 
+}
+ 
+/* .MuiTableRow-root:hover {
+  background-color: #f9f9f9 !important;
+} */
+ 
+.MuiAvatar-root {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 10px !important;
+  background-color: #3f51b5 !important;
+  color: white !important;
+}
+ 
+.MuiTypography-root {
+  right: 12px;
+  display: grid;
+  font-size: 13px !important;
+  font-family: 'Poppins', sans-serif !important;
+  white-space: pre-wrap;
+ 
+}
+.status{
+  color: #AA1700 !important ;
+}
+ 
+.table-actions {
+  display: flex !important;
+  justify-content: space-between;
+  padding: 10px;
+  gap: 3px !important;
+}
+ 
+.table-container th,
+.table-container td {
+  /* width: 120px !important; */
+  text-align: left !important;
+  white-space: pre-wrap;
+  font-family: 'Poppins', sans-serif !important;
+  border-bottom: none;
+  /* Ensure text is aligned to the left */
+}
+.table-head {
+  background: white !important;
+  border-bottom: 2px solid #8FBEF8;
+  padding: 100px;
+  font-weight: bold !important;
+  font-family: 'Poppins', sans-serif !important;
+  text-transform: none !important;
+ 
+}
+.table-head th {
+  font-weight: bold !important;
+}
+ 
+ 
+.MuiTableHead-row {
+  width: 100px !important;
+  font-family: 'Poppins', sans-serif !important;
+ 
+}
+.MuiTableBody-root th:nth-child(7) {
+  padding-right: 20px;
+}
+.icon {
+  margin-left: 30px;
+}
+ 
+.project{
+  white-space: pre-wrap !important;
+}
+.MuiSelect-nativeInput {
+ opacity: 1;
+}
+.MuiTableCell-root:nth-child(1) {
+  /* white-space: pre-wrap; */
+  text-align: center;
+  justify-content: space-between;
+  padding-left: 15px !important;
+  padding-right: 30px !important;
+}
+ 
+.no {
+  border-right: none !important;
+}
+ 
+.MuiTableCell-root:nth-child(7) {
+  padding-left: 20px !important;
+}
+ 
+.tab-label {
+  display: flex;
+  align-items: center;
+}
+ 
+.tab-label-number {
+  margin-left: 5px;
+  color: #747474;
+  font-weight: normal;
+}
+ 
+.tab-label-number::before {
+  content: "(";
+}
+ 
+.tab-label-number::after {
+  content: ")";
+}
+ 
+/* .MuiTabs-indicator {
+ 
+  left: 40px !important;
+  width: 8%!important;
+ 
+  background-color: red !important;
+  border-radius: 20px !important;
+ 
+} */
+ 
+.pagination {
+  display: flex;
+  justify-content: space-between;  /* This pushes content to opposite sides */
+  align-items: center;
+  width: 100%;  /* Ensure the pagination takes up the full width */
+  padding: 10px 30px;  /* Adjust padding as needed */
+  font-family: 'Poppins', sans-serif !important;
+}
+ 
+ 
+.MuiTablePagination-actions {
+  display: flex;
+  justify-content: flex-end;  /* Aligns the arrows (< >) to the right */
+  flex-shrink: 0;  /* Prevents the action buttons from shrinking */
+  margin-left: 100px;
+}
+ 
+ 

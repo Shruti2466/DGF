@@ -1,0 +1,17 @@
+ 
+ body{
+    text-align: justify;
+   }
+   .user-profile {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 2rem;
+    }
+    
+    .avatar-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
