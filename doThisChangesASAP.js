@@ -1681,26 +1681,19 @@ emp_id: emp.id,
         <span>{option.name}</span>
       </div>
       
-      {option.totalPrimarySkills >= 3 ? (
+      {option.totalPrimarySkills > 0 && (
         <span style={{
-          backgroundColor: '#ffebee',
+          backgroundColor: 
+            option.totalPrimarySkills >= 3 ? '#ffebee' :
+            option.totalPrimarySkills === 1 ? '#fff3e0' : '#e0e0e0',
           borderRadius: '12px',
           padding: '4px 8px',
           fontSize: '10px',
-          color: '#c62828'
+          color: option.totalPrimarySkills >= 3 ? '#c62828' : '#000000'
         }}>
-          Not Available (3+ learnings)
+          {option.totalPrimarySkills} learnings
         </span>
-      ) : option.totalPrimarySkills > 0 ? (
-        <span style={{
-          backgroundColor: '#e0e0e0',
-          borderRadius: '12px',
-          padding: '4px 8px',
-          fontSize: '10px'
-        }}>
-          {option.totalPrimarySkills} learning(s) in progress
-        </span>
-      ) : null}
+      )}
     </li>
   )}
   PaperComponent={(props) => (
@@ -1713,6 +1706,8 @@ emp_id: emp.id,
     />
   )}
 />
+
+
     </FormControl>
   </Grid>
 
